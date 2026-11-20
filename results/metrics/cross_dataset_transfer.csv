@@ -1,0 +1,2 @@
+benchmark,accuracy,macro_f1,precision_fake,recall_fake,precision_honest,recall_honest,roc_auc,pr_auc
+"Salminen et al. (40,432 reviews)",0.5211,0.496,0.538,0.2981,0.5146,0.7441,0.529,0.5392

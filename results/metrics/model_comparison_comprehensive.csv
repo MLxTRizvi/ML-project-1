@@ -1,0 +1,9 @@
+Pipeline,Model,Accuracy,Macro_F1,Precision_Fake,Recall_Fake,F1_Fake,Precision_Honest,Recall_Honest,F1_Honest,ROC_AUC,PR_AUC,Train_Time_Sec,Latency_ms_per_100,Model_Size_MB
+Enhanced (B),Logistic Regression (Balanced),0.783,0.7592,0.8598,0.8114,0.8349,0.6475,0.7237,0.6835,0.8439,0.9063,26.05,65.26,1.15
+Enhanced (B),SGD Log-Loss Classifier,0.7768,0.7528,0.8566,0.8047,0.8298,0.6378,0.7185,0.6758,0.8358,0.9008,19.48,64.54,1.15
+Baseline (A),Logistic Regression (Balanced),0.7674,0.7406,0.8439,0.8049,0.824,0.6284,0.689,0.6573,0.8186,0.8888,1.75,3.32,0.92
+Baseline (A),SGD Log-Loss Classifier,0.7639,0.7383,0.8457,0.7962,0.8202,0.6206,0.6965,0.6564,0.8116,0.882,1.75,3.35,0.92
+Enhanced (B),Linear SVM (Balanced),0.7629,0.7331,0.8338,0.811,0.8222,0.6265,0.6623,0.6439,0.8188,0.8911,45.3,64.13,1.15
+Baseline (A),Linear SVM (Balanced),0.7475,0.7152,0.8207,0.8018,0.8112,0.605,0.6342,0.6193,0.8003,0.8811,1.74,3.31,0.92
+Baseline (A),Random Forest (Depth 25),0.7301,0.705,0.8302,0.7554,0.791,0.57,0.6773,0.619,0.7856,0.8658,2.09,3.97,2.64
+Baseline (A),Multinomial Naive Bayes (Smoothed),0.7286,0.5818,0.721,0.9767,0.8296,0.8119,0.2103,0.3341,0.8035,0.8838,1.6,3.32,1.8

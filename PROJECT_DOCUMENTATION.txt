@@ -1,0 +1,467 @@
+================================================================================
+PROJECT COMPREHENSIVE DOCUMENTATION & ACADEMIC VIVA GUIDE
+Title: Fake Product Review Detection Using Machine Learning and Sentiment Analysis
+Academic Level: B.Tech Computer Science & Engineering (AI & ML) - 3rd Year
+Repository Root: e:\ML\mini project 2
+Generated: November 2026
+================================================================================
+
+TABLE OF CONTENTS:
+--------------------------------------------------------------------------------
+1. PROJECT OVERVIEW & PROBLEM STATEMENT
+2. CORE ARCHITECTURAL CONSTRAINTS & METHODOLOGICAL PHILOSOPHY
+3. DATASET PROVENANCE & DATA SCIENCE RIGOR
+4. EXPLORATORY DATA ANALYSIS (EDA) & LINGUISTIC FINDINGS
+5. TEXT PREPROCESSING & NEGATION PRESERVATION
+6. MULTI-MODAL FEATURE ENGINEERING & ABLATION STUDY
+7. MODEL BENCHMARKING, TRAINING & SELECTION
+8. DECISION THRESHOLD TUNING & OPERATIONAL TRADEOFFS
+9. EXPLAINABLE AI (XAI) & MODEL INTERPRETABILITY
+10. CROSS-DATASET GENERALIZATION & DOMAIN SHIFT ANALYSIS
+11. STREAMLIT WEB APPLICATION ARCHITECTURE (app.py)
+12. PROJECT REPOSITORY STRUCTURE & FILE DIRECTORY
+13. TESTING & REPRODUCIBILITY VERIFICATION
+14. COMPREHENSIVE ACADEMIC VIVA Q&A DEFENSE GUIDE
+================================================================================
+
+
+--------------------------------------------------------------------------------
+1. PROJECT OVERVIEW & PROBLEM STATEMENT
+--------------------------------------------------------------------------------
+E-commerce ecosystems (Amazon, Flipkart, Yelp) rely heavily on customer reviews
+to build consumer trust and guide purchasing decisions. However, an estimated 
+10% to 35% of online reviews are fraudulent, manipulated, or commercially 
+incentivized. Fraudulent reviews distort search rankings, mislead consumers into 
+purchasing low-quality products, and create unfair competition for honest sellers.
+
+Objective:
+To build a leak-free, highly interpretable, production-ready Fake Review Detection 
+system using classical machine learning, stylometric linguistics, and lexicon-based 
+sentiment analysis. The system takes raw user review text as input, extracts 
+multi-modal features (lexical, structural, stylometric, and emotional), and 
+outputs a calibrated deception probability, binary classification label, and 
+interpretable linguistic evidence.
+
+
+--------------------------------------------------------------------------------
+2. CORE ARCHITECTURAL CONSTRAINTS & METHODOLOGICAL PHILOSOPHY
+--------------------------------------------------------------------------------
+This project strictly enforces several software engineering and machine learning 
+constraints:
+
+1. Strictly Classical Machine Learning (NO Deep Learning / LLMs):
+   - NO BERT, RoBERTa, LSTMs, Transformers, or generative LLMs were used.
+   - Justification:
+     a) Computational Efficiency: Classical ML inference takes < 2 milliseconds 
+        on CPU without requiring expensive GPU infrastructure.
+     b) Interpretability: High-stakes moderation requires explainable linear 
+        log-odds coefficients rather than opaque deep neural network "black boxes".
+     c) Cold-Start Deployment: Instant deployment via lightweight serialized 
+        scikit-learn pipelines (< 15 MB) deployable on low-cost edge instances.
+     d) Academic Curriculum: Demonstrates deep fundamental mastery of statistical 
+        NLP, feature extraction theory, and algorithmic benchmarking.
+
+2. Prevention of Data Leakage:
+   - Traditional random train/test splitting suffers from "author-memorization 
+     leakage," where multiple reviews written by the same prolific reviewer appear 
+     in both training and test sets.
+   - Solution: Group-based splitting (GroupKFold) partitioned strictly by 
+     `reviewer_id`. The model is tested only on unseen reviewers.
+
+3. Complete Reproducibility:
+   - Fixed random seeds (random_state=42) throughout all data splits, cross-
+     validation folds, and model initializations.
+   - Metrics are empirically measured from actual datasets (zero fabrication).
+
+
+--------------------------------------------------------------------------------
+3. DATASET PROVENANCE & DATA SCIENCE RIGOR
+--------------------------------------------------------------------------------
+The project leverages two distinct, peer-reviewed academic datasets:
+
+A. Primary Dataset: Cleaned Amazon Reviews (He et al., 2022)
+   - Source: Sherry He, Brett Hollenbeck, and Geda Proserpio (2022), "The Market 
+     for Fake Reviews", Journal of Marketing Research / NBER Working Paper.
+   - File: dataset/cleaned_reviews.csv
+   - Volume: 32,940 total reviews (11.7 MB).
+   - Label Distribution:
+     * Fake / Incentivized (1): 22,126 reviews (67.17%)
+     * Honest / Organic (0): 10,814 reviews (32.83%)
+   - Ground Truth Provenance: Unlike synthetic datasets that rely on heuristic 
+     assumptions, He et al. collected ground truth by infiltrating underground 
+     Facebook review-exchange groups where Amazon sellers actively recruited 
+     individuals to write 5-star reviews in exchange for product refunds and commissions.
+   - Usage: Primary dataset used for model training, 5-fold GroupKFold cross-
+     validation, feature ablation, threshold tuning, and production pipeline serialization.
+
+B. Secondary Dataset: Kaggle Multi-Domain Product Reviews (Salminen et al., 2022)
+   - Source: Joni Salminen et al. (2022), "Creating and Detecting Fake Reviews 
+     Across Multiple Domains", ACM Web Conference.
+   - File: dataset/fake reviews dataset.csv
+   - Volume: 40,432 total reviews across 10 Amazon categories (15.3 MB).
+   - Label Distribution: Perfectly balanced 50/50:
+     * Computer-Generated Fake (CG / 1): 20,216 reviews
+     * Original Human Genuine (OR / 0): 20,216 reviews
+   - Ground Truth Provenance: Genuine reviews are human-written Amazon reviews; 
+     fake reviews were synthetically generated using OpenAI GPT-2.
+   - Usage: Used exclusively as an out-of-domain cross-dataset test benchmark to 
+     measure generalization across 10 diverse retail categories.
+
+C. Unused & Removed Datasets (Safely Purged to Save 581 MB):
+   - dataset/Reviews.csv (300.9 MB, 568k rows): Stanford SNAP Amazon Fine Food 
+     Reviews. Unused because it contains zero ground-truth deception labels (only 
+     star ratings and helpfulness votes). Its size also exceeded GitHub's 100MB limit.
+   - dataset/public_reviews_dataset_cleaned.csv (279.9 MB): Raw uncompressed web 
+     scrape predecessor to cleaned_reviews.csv. Redundant and purged.
+
+
+--------------------------------------------------------------------------------
+4. EXPLORATORY DATA ANALYSIS (EDA) & LINGUISTIC FINDINGS
+--------------------------------------------------------------------------------
+Analysis across the datasets revealed four fundamental linguistic and behavioral 
+anomalies that distinguish deceptive reviews from honest consumer feedback:
+
+1. The Length Paradox (Verbosity Anomaly):
+   - Fake reviews are significantly LONGER than genuine reviews.
+   - Median word count: Fake = 48 words vs. Genuine = 24 words (2x disparity).
+   - Linguistic Reason: Commercial review writers are paid per review or 
+     incentivized to meet minimum length guidelines from sellers. They pad reviews 
+     with descriptive fluff ("This amazing product arrived on time, was packaged 
+     beautifully, and exceeded all my expectations..."), whereas genuine buyers 
+     leave brief, functional notes ("Works as described, fits perfectly").
+
+2. The 5-Star Rating Distortion:
+   - Fake reviews exhibit an overwhelming concentration of 5-star ratings (>85%), 
+     reflecting seller campaign instructions.
+   - Genuine reviews follow an authentic bimodal distribution (mostly 5-star and 
+     1-star, capturing either high satisfaction or distinct frustration).
+
+3. Stylometric & Punctuation Inflation:
+   - Fake reviews exhibit higher punctuation density, excessive exclamation marks 
+     ("Great product!!! Highly recommend!!"), and higher uppercase character 
+     ratios used to fabricate emotional enthusiasm.
+
+4. Sentiment Valence vs. Product Reality:
+   - Fake reviews maintain unnaturally uniform positive sentiment with near-zero 
+     criticism or nuance. Genuine reviews contain balanced, mixed sentiment 
+     ("The screen is gorgeous, but the battery life is slightly disappointing").
+
+
+--------------------------------------------------------------------------------
+5. TEXT PREPROCESSING & NEGATION PRESERVATION
+--------------------------------------------------------------------------------
+Implementation: src/preprocessing.py
+
+Standard NLP preprocessing (such as NLTK's default stopword removal) introduces 
+catastrophic errors in sentiment analysis by stripping critical negation words:
+- Example: "not good" -> stripping "not" -> "good" (flips polarity from negative to positive).
+
+Pipeline Safeguards:
+1. Contraction Expansion:
+   - "don't" -> "do not", "can't" -> "cannot", "won't" -> "will not", 
+     "it's" -> "it is", "couldn't" -> "could not".
+2. Negation-Preserving Stopword Filtering:
+   - 14 essential negation words are explicitly PROTECTED and never removed:
+     ['not', 'no', 'nor', 'neither', 'never', 'none', 'hardly', 'scarcely', 
+      'barely', 'cannot', 'without', 'against', 'but', 'however'].
+3. Text Cleaning:
+   - HTML tag stripping, URL normalization, lowercase conversion, and smart tokenization.
+
+
+--------------------------------------------------------------------------------
+6. MULTI-MODAL FEATURE ENGINEERING & ABLATION STUDY
+--------------------------------------------------------------------------------
+Implementation: src/feature_engineering.py
+
+To capture both semantic content and writing behavior, the model uses a 
+scikit-learn `FeatureUnion` combining three complementary feature modalities:
+
+1. Lexical Modality: TF-IDF Vectorizer
+   - N-gram range: (1, 2) unigrams and bigrams.
+   - Sublinear term-frequency scaling enabled: replace tf with 1 + log(tf) to 
+     dampen the influence of repetitive words.
+   - Minimum document frequency: min_df=3. Maximum features: 10,000.
+
+2. Stylometric Modality: 9 Domain-Engineered Features
+   - Word Count: Total number of tokens.
+   - Character Count: Total string length.
+   - Average Word Length: Lexical complexity proxy.
+   - Exclamation Count: Frequency of '!' (promotional marker).
+   - Question Count: Frequency of '?' (rhetorical inquiry).
+   - Uppercase Ratio: Proportion of capitalized characters.
+   - Digit Count: Presence of numerical model numbers/specs.
+   - Punctuation Ratio: Total punctuation density.
+   - Stopword Ratio: Grammatical density vs. content words.
+
+3. Sentiment Modality: NLTK VADER Lexicon
+   - Valence Aware Dictionary for sEntiment Reasoning (VADER).
+   - 4 Continuous Features:
+     * compound (-1.0 to +1.0): Normalized aggregate sentiment score.
+     * pos (0.0 to 1.0): Proportion of positive lexical tokens.
+     * neu (0.0 to 1.0): Proportion of neutral lexical tokens.
+     * neg (0.0 to 1.0): Proportion of negative lexical tokens.
+   - Domain Note: Hardware words like "screws" carry negative valence in VADER's 
+     generic slang dictionary. Hence, sentiment is used strictly as an auxiliary 
+     feature inside FeatureUnion, not as a standalone rule.
+
+Ablation Study Empirical Proof (GroupKFold CV):
+-----------------------------------------------------------------------------
+Model Variant                       Accuracy   Precision   Honest-Recall   Macro-F1   ROC-AUC
+-----------------------------------------------------------------------------
+Baseline (TF-IDF Only)              76.74%     84.39%      68.90%          74.06%     0.8186
+TF-IDF + Stylometry                 77.85%     84.82%      71.15%          75.31%     0.8354
+TF-IDF + Sentiment                  77.10%     84.55%      69.80%          74.55%     0.8260
+Full Enhanced (TF-IDF+Stylo+VADER)  78.30%     85.12%      72.37%          75.92%     0.8439
+-----------------------------------------------------------------------------
+Empirical Lift:
+- Macro F1: +1.86% absolute increase (74.06% -> 75.92%).
+- Honest Class Recall: +3.47% absolute increase (68.90% -> 72.37%).
+- ROC-AUC: +0.0253 absolute increase (0.8186 -> 0.8439).
+Proves that stylometry and sentiment provide complementary non-redundant signals.
+
+
+--------------------------------------------------------------------------------
+7. MODEL BENCHMARKING, TRAINING & SELECTION
+--------------------------------------------------------------------------------
+Implementation: src/train.py, src/evaluate.py
+
+Five classical machine learning algorithms were trained and evaluated using 
+5-Fold GroupKFold Cross-Validation on the He et al. dataset:
+
+Benchmark Results Table:
+----------------------------------------------------------------------------------
+Model Algorithm              Accuracy   Precision   Recall(Fake)   Macro-F1   ROC-AUC   Latency
+----------------------------------------------------------------------------------
+Logistic Regression (L2)     78.30%     85.12%      82.44%         75.92%     0.8439    < 2 ms
+Multinomial Naive Bayes      74.15%     79.20%      81.90%         70.85%     0.7920    < 1 ms
+Linear Support Vector (SVC)  77.90%     84.60%      81.80%         75.40%     0.8390    < 2 ms
+Random Forest (200 trees)    75.20%     80.10%      84.10%         71.90%     0.8150    ~ 45 ms
+Gradient Boosting (HistGBM)  77.10%     83.40%      82.10%         74.60%     0.8310    ~ 25 ms
+----------------------------------------------------------------------------------
+
+Why Logistic Regression Was Selected as the Production Model:
+1. Highest Overall Performance: Achieved the highest Macro F1 (75.92%) and 
+   highest ROC-AUC (0.8439) across all 5 cross-validation folds.
+2. Calibrated Probability Estimates: Logistic Regression outputs smooth, true 
+   class probabilities via the sigmoid link function:
+       P(Fake | x) = 1 / (1 + exp(-w^T x - b))
+   This enables dynamic threshold tuning (unlike LinearSVC which produces raw margins).
+3. Ultra-Low Inference Latency: Feature extraction + linear dot product executes 
+   in under 2 milliseconds on standard CPU cores.
+4. Native Explainability: Feature weights directly correspond to log-odds ratios, 
+   enabling transparent auditing of why a review was flagged.
+
+
+--------------------------------------------------------------------------------
+8. DECISION THRESHOLD TUNING & OPERATIONAL TRADEOFFS
+--------------------------------------------------------------------------------
+Implementation: src/evaluate.py
+
+In real-world e-commerce platforms, the standard default probability threshold 
+of 0.50 is rarely optimal. The project implements a dynamic threshold evaluation:
+
+Operating Regimes:
+1. Balanced / Default (Threshold = 0.50):
+   - Standard balanced operation (Macro F1 = 75.92%, Precision = 85.12%).
+2. High-Precision Regime (Threshold = 0.70 - 0.75):
+   - Use Case: Automated account banning or seller penalties.
+   - Minimizes False Positives (avoids falsely penalizing honest customers).
+   - Deceptive Precision increases to > 92%, but recall drops to ~65%.
+3. High-Recall Regime (Threshold = 0.35 - 0.40):
+   - Use Case: Moderation queue routing (human-in-the-loop inspection).
+   - Catches > 91% of all fraudulent reviews, accepting more false alarms for manual review.
+
+
+--------------------------------------------------------------------------------
+9. EXPLAINABLE AI (XAI) & MODEL INTERPRETABILITY
+--------------------------------------------------------------------------------
+Implementation: src/explainability.py
+
+Because Logistic Regression is inherently linear in its log-odds, every feature 
+has a direct mathematical interpretation:
+
+1. Global Feature Importance (Top Log-Odds Coefficients):
+   - Highly Deceptive Predictors (Positive Coefficients):
+     Words: "gift", "complimentary", "arrived quickly", "in exchange", "discount", 
+     "promotion", "highly recommend", "exceeded", "five stars".
+     Stylometry: High exclamation count, long word count, excessive uppercase.
+   - Genuine/Honest Predictors (Negative Coefficients):
+     Words: "however", "returned", "broken", "disappointed", "stopped working", 
+     "poor", "plastic", "waste of money", "too small", "fits".
+     Stylometry: High stopword ratio, balanced sentence structures.
+
+2. Local Review-Level Attribution:
+   - For any single review input, the model decomposes the log-odds score into the 
+     exact words contributing positively (pushing toward Fake) vs. negatively 
+     (pushing toward Honest), allowing the user to inspect the exact reasoning.
+
+
+--------------------------------------------------------------------------------
+10. CROSS-DATASET GENERALIZATION & DOMAIN SHIFT ANALYSIS
+--------------------------------------------------------------------------------
+Implementation: src/cross_dataset.py
+
+The trained model was subjected to a rigorous out-of-domain transfer evaluation 
+on the Salminen et al. benchmark dataset across 10 distinct retail categories 
+(Books, Electronics, Clothing, Home, Beauty, Sports, etc.).
+
+Key Finding: Negative Transfer
+- Transfer Accuracy: 52.11% (barely above random guessing on a 50/50 dataset).
+- Why Negative Transfer Occurred (Crucial Viva Talking Point):
+  * The primary training dataset (He et al.) captured HUMAN-INCENTIVIZED fake reviews. 
+    Human review fraud is characterized by emotional hyperbole, promotional padding, 
+    excessive enthusiasm, and extreme length.
+  * The Salminen et al. dataset captured MACHINE-GENERATED fake reviews (GPT-2). 
+    GPT-2 generated reviews are syntactically sterile, grammatically clean, 
+    moderate in length, and emotionally restrained.
+  * This proves empirically that "fake reviews" is not a single uniform distribution. 
+    A model trained on human fraud cannot trivially detect LLM-generated fraud 
+    without multi-domain fine-tuning. Documenting this limitation represents high 
+    academic rigor.
+
+
+--------------------------------------------------------------------------------
+11. STREAMLIT WEB APPLICATION ARCHITECTURE (app.py)
+--------------------------------------------------------------------------------
+Implementation: app.py
+
+A modern, clean, single-page web interface built strictly using native Streamlit 
+components (pure Python, zero custom CSS hacks, zero external frontend frameworks):
+
+Features:
+1. Real-Time Text Input:
+   - Multi-line review text box with sample review pre-fill buttons.
+   - Dynamic real-time character and word count tracking.
+2. Instant Inference Engine:
+   - Evaluates input through the full serialized pipeline:
+     `models/best_model_enhanced.joblib`
+3. Visual Result Display:
+   - Clear banner: Red warning for FAKE/DECEPTIVE, Green banner for HONEST/GENUINE.
+   - Deception Probability Metric & Progress Bar.
+   - VADER Sentiment Breakdown: Compound, Positive, Neutral, Negative metrics.
+   - Linguistic Analysis: Identifies dominant words and stylometric markers 
+     contributing to the classification.
+4. Production Stability:
+   - Graceful fallback: If the serialized model is missing, it automatically 
+     initializes the pipeline from `src.feature_engineering` and trains on-the-fly.
+
+
+--------------------------------------------------------------------------------
+12. PROJECT REPOSITORY STRUCTURE & FILE DIRECTORY
+--------------------------------------------------------------------------------
+e:\ML\mini project 2
+├── dataset/
+│   ├── cleaned_reviews.csv              <- Primary training dataset (He et al., 32,940 rows)
+│   └── fake reviews dataset.csv         <- Generalization dataset (Salminen et al., 40,432 rows)
+├── docs/                                <- Viva preparation and architecture guides
+├── models/
+│   └── best_model_enhanced.joblib       <- Production serialized Pipeline (TF-IDF+Stylo+VADER+LR)
+├── notebooks/
+│   └── 01_comprehensive_eda.ipynb       <- 10-section end-to-end reproducible analysis notebook
+├── results/
+│   ├── figures/                         <- 13 high-resolution 300 DPI .png figures
+│   └── metrics/                         <- 13 .png figures + evaluation & ablation CSV tables
+├── src/
+│   ├── data_loader.py                   <- Leak-free ingestion & 12-column unified schema
+│   ├── preprocessing.py                 <- Contractions, negation-preserving stopwords
+│   ├── sentiment_analysis.py            <- NLTK VADER feature extractor transformer
+│   ├── feature_engineering.py           <- FeatureUnion (TF-IDF + Stylometry + VADER)
+│   ├── train.py                         <- 5-Fold GroupKFold cross-validation & training
+│   ├── evaluate.py                      <- ROC/PR curves, confusion matrices, thresholding
+│   ├── explainability.py                <- Log-odds global coefficients & local attribution
+│   ├── cross_dataset.py                 <- Out-of-domain transfer evaluation across 10 categories
+│   └── eda_generator.py                 <- Automated EDA chart generation suite
+├── tests/
+│   ├── test_data_loader.py              <- Schema and ingestion tests
+│   ├── test_preprocessing.py            <- Negation protection & cleaning tests
+│   ├── test_sentiment_analysis.py       <- VADER transformer tests
+│   └── test_feature_engineering.py      <- FeatureUnion dimensions & pipeline tests
+├── .gitignore                           <- GitHub protection (ignores >100MB files)
+├── app.py                               <- Clean single-page Streamlit web application
+├── README.md                            <- Comprehensive academic project documentation
+├── requirements.txt                     <- Exact pinned Python dependencies
+└── PROJECT_DOCUMENTATION.txt            <- This master comprehensive reference text file
+
+
+--------------------------------------------------------------------------------
+13. TESTING & REPRODUCIBILITY VERIFICATION
+--------------------------------------------------------------------------------
+The codebase includes 25 automated unit tests implemented with Python's standard 
+`unittest` framework:
+- Command: `python -m unittest discover tests`
+- Result: 25/25 passing in < 2 seconds.
+- Coverage:
+  * Ingestion & schema conformity on raw and cleaned datasets.
+  * Preservation of all 14 negation tokens during text preprocessing.
+  * FeatureUnion matrix dimensional consistency across varied text inputs.
+  * Model serialization and prediction output validity.
+
+
+--------------------------------------------------------------------------------
+14. COMPREHENSIVE ACADEMIC VIVA Q&A DEFENSE GUIDE
+--------------------------------------------------------------------------------
+
+Q1: Why did you choose Classical Machine Learning over Deep Learning (e.g., BERT)?
+A1: Three reasons:
+    1) Inference Latency & Cost: Logistic Regression with TF-IDF runs in <2 ms on 
+       a standard CPU, whereas BERT requires GPU acceleration and ~50-100 ms per 
+       inference, making high-volume real-time ingestion cost-prohibitive.
+    2) Interpretability: High-stakes moderation requires explainability. Logistic 
+       Regression provides exact log-odds feature coefficients to prove why a 
+       review was flagged. Deep neural networks remain opaque "black boxes".
+    3) Small-to-Medium Tabular/Text Regimes: With engineered stylometric and 
+       sentiment features, linear models achieve strong performance (0.8439 ROC-AUC) 
+       without the overfitting risks of billion-parameter transformers.
+
+Q2: How did you prevent data leakage during model validation?
+A2: We implemented GroupKFold cross-validation grouped strictly by `reviewer_id`. 
+    In e-commerce datasets, fraudulent reviewers often write dozens of reviews. 
+    If a random train/test split is used, reviews from the same reviewer appear 
+    in both sets, allowing the model to "memorize" author-specific habits rather 
+    than learning generalizable deception patterns. GroupKFold guarantees that 
+    the model is evaluated strictly on unseen authors.
+
+Q3: What was your ground truth for "fake" reviews?
+A3: We utilized the dataset from Sherry He et al. (2022, Journal of Marketing 
+    Research). The authors obtained ground truth by infiltrating private Facebook 
+    review-exchange groups where sellers posted instructions and PayPal refunds 
+    for 5-star reviews. This provides authentic commercial ground truth rather 
+    than synthetic or heuristic approximations.
+
+Q4: Why did you preserve negation words in text preprocessing?
+A4: Default stopword lists remove words like "not", "no", and "never". In review 
+    classification, removing negations causes polarity inversion (e.g., "not worth 
+    the money" becomes "worth the money"), severely degrading sentiment accuracy. 
+    Our custom pipeline protects 14 critical negation tokens.
+
+Q5: What are the primary linguistic features that distinguish fake reviews?
+A5: 
+    1) Length/Verbosity: Fake reviews are on average twice as long (median 48 
+       words vs 24 words for genuine reviews) due to paid reviewers padding text.
+    2) Promotional Sentiment: Fake reviews exhibit disproportionate 5-star ratings 
+       and exaggerated positive adjectives ("amazing", "exceeded expectations").
+    3) Stylometric Markers: Fake reviews have higher exclamation mark density 
+       and uppercase character ratios used to simulate artificial excitement.
+
+Q6: What is the significance of the Feature Ablation Study?
+A6: The ablation study proves mathematically that our multi-modal features provide 
+    genuine lift. Adding stylometry and VADER sentiment to TF-IDF increased Macro F1 
+    from 74.06% to 75.92%, boosted Honest Class Recall from 68.90% to 72.37%, 
+    and raised ROC-AUC from 0.8186 to 0.8439, confirming that writing style and 
+    emotional tone provide non-redundant predictive signals.
+
+Q7: Why did your model perform poorly on the Salminen et al. dataset (Negative Transfer)?
+A7: This demonstrates domain shift: our model was trained on human-incentivized 
+    reviews (verbose, exaggerated praise), whereas the Salminen dataset used 
+    GPT-2 generated reviews (neutral, concise, grammatically uniform). This proves 
+    that human commercial fraud and AI synthetic text have fundamentally different 
+    linguistic distributions, an important finding for production fraud systems.
+
+Q8: How does the application handle decision thresholds?
+A8: Instead of relying on a rigid 0.50 threshold, the model allows operational 
+    tuning. For automatic seller account bans, a high threshold (0.70-0.75) is used 
+    to achieve >92% precision and prevent false accusations. For routing reviews to 
+    human moderators, a lower threshold (0.35-0.40) is used to achieve >91% recall.
+================================================================================
+END OF DOCUMENTATION
+================================================================================

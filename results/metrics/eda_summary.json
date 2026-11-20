@@ -1,0 +1,24 @@
+{
+    "primary_dataset": {
+        "name": "He_et_al_Amazon",
+        "total_reviews": 32940,
+        "fake_reviews": 22138,
+        "genuine_reviews": 10802,
+        "fake_ratio": 0.6721,
+        "genuine_word_count_median": 24.0,
+        "genuine_word_count_mean": 40.33,
+        "fake_word_count_median": 48.0,
+        "fake_word_count_mean": 59.7,
+        "genuine_char_count_mean": 215.91,
+        "fake_char_count_mean": 314.92
+    },
+    "secondary_dataset": {
+        "name": "Salminen_Kaggle_Amazon",
+        "total_reviews": 40432,
+        "fake_reviews": 20216,
+        "genuine_reviews": 20216,
+        "categories_count": 10,
+        "five_star_pct": 60.74,
+        "one_star_pct": 5.33
+    }
+}
