@@ -40,7 +40,7 @@ Direct comparison on identical test folds proves that adding stylometrics and VA
 
 ## 2. Project Architecture & Pipeline Flow
 
-```mermaid
+```text
 flowchart TD
     subgraph Data Layer
         D1["Primary Dataset (He et al., 2022)<br/>32,940 Ground-Truth Reviews"]
