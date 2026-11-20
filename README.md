@@ -224,23 +224,8 @@ mini project 2/
 
 ---
 
-## 7. Critical Academic Viva Defense Q&A
 
-### Q1: "Why did you use Classical Machine Learning instead of BERT or Transformers?"
-> *"Our project prioritizes auditability, inference speed, and resistance to domain overfitting. Linear models with regularized multi-modal features achieve ~78.3% accuracy with an inference latency of 65 ms per 100 samples and a footprint of only 1.15 MB. Crucially, linear models yield exact mathematical log-odds coefficients ($e^{w_i}$), allowing us to explain to an e-commerce compliance auditor exactly which lexical and stylometric tokens triggered a suspicion flag—something black-box transformers cannot do without heavy approximations."*
-
-### Q2: "Why did you use GroupShuffleSplit instead of standard train_test_split?"
-> *"Random splitting causes severe reviewer-level data leakage. In review datasets, prolific authors contribute multiple reviews with unique stylistic habits. If reviews from the same author appear in both training and test folds, the classifier learns author identification rather than generalizable signals of deception. Group splitting by `reviewer_id` guarantees zero author overlap between folds."*
-
-### Q3: "What did your Feature Ablation experiment prove?"
-> *"Under identical data splits, adding character n-grams, stylometric markers (length, uppercase ratio, exclamations, pronoun frequency, lexical diversity), and VADER sentiment scores provided a consistent empirical lift across every metric: Accuracy increased from 76.74% to 78.30% (+1.56%), Macro F1 from 74.06% to 75.92% (+1.86%), and Honest Review Recall from 68.90% to 72.37% (+3.47%)."*
-
-### Q4: "Why did your model experience a performance drop on the Salminen dataset?"
-> *"This reflects negative transfer due to the difference in the underlying generative mechanism. Our primary model was trained on human financial incentive fraud (recruited via Facebook), where reviewers use excessive length and emotional rhetoric to get refunds. In contrast, the Salminen dataset contains machine-generated text (GPT-2). The model correctly proves that human fraud patterns do not automatically transfer to synthetic AI reviews without domain adaptation."*
-
----
-
-## 8. Academic References
+## 7. Academic References
 
 1. **He, S., Hollenbeck, B., & Proserpio, G. (2022).** *The Market for Fake Reviews.* Marketing Science / NBER Working Paper No. 27671.
 2. **Salminen, J., Kandpal, C., Kamel, A. M., Jung, S. G., & Jansen, B. J. (2022).** *Creating and detecting fake reviews of extreme-sentiment: an interactive and transparent approach.* Springer Nature / Electronic Commerce Research.
