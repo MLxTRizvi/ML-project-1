@@ -8,6 +8,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import streamlit as st
+import nltk
+
+# Ensure required NLTK resources are available on cloud deployments (Streamlit Cloud, Docker, etc.)
+for resource in ["vader_lexicon", "stopwords", "wordnet"]:
+    try:
+        nltk.download(resource, quiet=True)
+    except Exception:
+        pass
 
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))

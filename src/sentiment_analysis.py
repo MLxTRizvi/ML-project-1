@@ -11,7 +11,8 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
+import os
+import nltk
 
 class VADERSentimentAnalyzer:
     """
@@ -30,7 +31,11 @@ class VADERSentimentAnalyzer:
         pos_threshold: float = 0.05,
         neg_threshold: float = -0.05
     ):
-        self.sia = SentimentIntensityAnalyzer()
+        try:
+            self.sia = SentimentIntensityAnalyzer()
+        except LookupError:
+            nltk.download("vader_lexicon", quiet=True)
+            self.sia = SentimentIntensityAnalyzer()
         self.pos_threshold = pos_threshold
         self.neg_threshold = neg_threshold
 
