@@ -225,16 +225,7 @@ mini project 2/
 ---
 
 
-## 7. Academic References
 
-1. **He, S., Hollenbeck, B., & Proserpio, G. (2022).** *The Market for Fake Reviews.* Marketing Science / NBER Working Paper No. 27671.
-2. **Salminen, J., Kandpal, C., Kamel, A. M., Jung, S. G., & Jansen, B. J. (2022).** *Creating and detecting fake reviews of extreme-sentiment: an interactive and transparent approach.* Springer Nature / Electronic Commerce Research.
-3. **Ott, M., Choi, Y., Cardie, C., & Hancock, J. T. (2011).** *Finding Deceptive Opinion Spam by Any Means Necessary.* In Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics (ACL 2011), pp. 309–319.
-4. **Hutto, C., & Gilbert, E. (2014).** *VADER: A Parsimonious Rule-Based Model for Sentiment Analysis of Social Media Text.* In Proceedings of the International AAAI Conference on Web and Social Media (ICWSM 2014).
-5. **Rayana, S., & Akoglu, L. (2015).** *Collective Opinion Spam Detection: Bridging Review Networks and Metadata.* In Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD 2015), pp. 985–994.
-
----
-
-## 9. License
+## 7. License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
