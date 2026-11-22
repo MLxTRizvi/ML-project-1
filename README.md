@@ -40,44 +40,43 @@ Direct comparison on identical test folds proves that adding stylometrics and VA
 
 ## 2. Project Architecture & Pipeline Flow
 
-```text
+```mermaid
 flowchart TD
-    subgraph Data Layer
+    subgraph DL["Data Layer"]
         D1["Primary Dataset (He et al., 2022)<br/>32,940 Ground-Truth Reviews"]
         D2["Secondary Benchmark (Salminen et al.)<br/>40,432 AI Reviews (10 Categories)"]
-        D3["Unlabeled Corpus (Stanford Fine Foods)<br/>568,454 Unsupervised Baseline"]
     end
 
-    subgraph Preprocessing & Leakage Control
-        P1["Unified 12-Column Schema Loader"]
+    subgraph PP["Preprocessing & Leakage Control"]
+        P1["Unified Schema Loader"]
         P2["GroupShuffleSplit by Reviewer ID<br/>(0% Author Leakage)"]
         P3["Text Normalizer<br/>(Contractions, HTML, URLs, Negations)"]
     end
 
-    subgraph Feature Engineering (FeatureUnion)
-        F1["Word TF-IDF (1-2 grams, Negation-Preserved)"]
-        F2["Character TF-IDF (2-5 sub-word grams)"]
-        F3["Stylometric Profiler (Length, CAPS, Exclamations, TTR)"]
-        F4["VADER Sentiment Engine (Pos, Neg, Neu, Compound)"]
+    subgraph FE["Feature Engineering"]
+        F1["Word TF-IDF (1-2 N-Grams, Negation-Preserved)"]
+        F2["Character TF-IDF (2-5 Sub-word N-Grams)"]
+        F3["Stylometric Profiler (Length, Punctuation, Caps)"]
+        F4["VADER Lexical Sentiment (Pos, Neg, Compound)"]
     end
 
-    subgraph Machine Learning & Explainability
-        M1["Regularized Logistic Regression (Balanced)"]
-        M2["Linear Support Vector Machine (SVC)"]
+    subgraph ML["Machine Learning & Explainability"]
+        M1["Logistic Regression (Balanced, C=2.0)"]
+        M2["Linear Support Vector Machine (LinearSVC)"]
         M3["Multinomial Naive Bayes (Smoothed)"]
-        M4["Random Forest & SGD Classifiers"]
+        M4["Random Forest & Ensemble Classifiers"]
         X1["Log-Odds Feature Attribution (XAI)"]
         X2["Cross-Domain Transfer Analysis"]
     end
 
-    subgraph Presentation Layer
-        APP["Streamlit Multi-Page Web App (8 Dashboards)"]
+    subgraph UI["Presentation & Deployment Layer"]
+        APP["Streamlit Cloud Web App<br/>(Interactive Real-Time Classifier & Explainability)"]
     end
 
-    Data Layer --> Preprocessing & Leakage Control
-    Preprocessing & Leakage Control --> Feature Engineering
-    Feature Engineering --> Machine Learning & Explainability
-    Machine Learning & Explainability --> Presentation Layer
+    DL --> PP
+    PP --> FE
+    FE --> ML
+    ML --> UI
 ```
 
 ---
@@ -215,11 +214,8 @@ mini project 2/
 │       └── cross_dataset_category_performance.csv
 │
 ├── notebooks/
-│   ├── 01_comprehensive_eda.ipynb     # Step-by-step academic exploration notebook
-│   └── EDA.ipynb                      # Historical EDA notebook (preserved)
-│
-└── docs/
-    └── dataset_benchmarks_and_expansion.md  # Survey of YelpChi, YelpNYC, OpSpam, etc.
+    ├── 01_comprehensive_eda.ipynb     # Step-by-step academic exploration notebook
+    └── EDA.ipynb                      # Historical EDA notebook (preserved)
 ```
 
 ---
