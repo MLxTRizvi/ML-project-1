@@ -222,6 +222,6 @@ mini project 2/
     └── dataset_benchmarks_and_expansion.md  # Survey of YelpChi, YelpNYC, OpSpam, etc.
 ```
 
-## 8. License
+## 7. License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
