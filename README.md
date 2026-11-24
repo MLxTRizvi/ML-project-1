@@ -94,10 +94,6 @@ flowchart TD
 - **Citation:** Salminen, J., et al. (2022). *Creating and detecting fake reviews of extreme-sentiment.* Springer Nature / Electronic Commerce Research.
 - **Scale:** $40,432$ reviews across 10 Amazon categories ($20,216$ CG [Computer Generated via GPT-2], $20,216$ OR [Original Human]).
 
-### Unlabeled Dataset: Stanford Amazon Fine Food Reviews
-- **Scale:** $568,454$ reviews.
-- **Integrity Notice:** Documented as having **zero deception labels**. Kept strictly as an out-of-domain unlabeled corpus for unsupervised sentiment testing; never used for supervised training.
-
 ---
 
 ## 4. Key Engineering Innovations & Methodologies
