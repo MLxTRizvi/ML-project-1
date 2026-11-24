@@ -159,7 +159,7 @@ http://localhost:8501
 
 ```
 mini project 2/
-├── app.py                             # Full-featured 8-page Streamlit Analytics Application
+├── app.py                             # Full-featured Streamlit Analytics Application
 ├── app_original_baseline.py           # Historical baseline app (preserved for reproducibility)
 ├── requirements.txt                   # Production package dependencies
 ├── README.md                          # Academic and technical documentation
