@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tests Passing](https://img.shields.io/badge/Unit%20Tests-25%2F25%20Passing-brightgreen.svg)]()
 
-> **B.Tech CSE (Artificial Intelligence & Machine Learning) — Academic Project**  
+> **An Academic Project on Fake Review Detection by Tauqeer Rizvi**  
 > An explainable, leak-free, classical Natural Language Processing and Machine Learning system for detecting incentivized and fraudulent e-commerce reviews using multi-modal stylometric, sentiment, and n-gram representations.
 
 ---
