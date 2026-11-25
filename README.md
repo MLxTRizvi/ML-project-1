@@ -4,7 +4,7 @@
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.9.1-orange.svg)](https://scikit-learn.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.67.0-red.svg)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests Passing](https://img.shields.io/badge/Unit%20Tests-25%2F25%20Passing-brightgreen.svg)]()
+
 
 > **An Academic Project on Fake Review Detection by Tauqeer Rizvi**  
 > An explainable, leak-free, classical Natural Language Processing and Machine Learning system for detecting incentivized and fraudulent e-commerce reviews using multi-modal stylometric, sentiment, and n-gram representations.
